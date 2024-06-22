@@ -1,0 +1,119 @@
+module.exports.typeDefs = `
+
+type User{
+    _id:ID!
+    name:String!
+    role:Roles!
+    email:String!
+    status:Status!
+    token:String!
+    bills:[Bill!]
+}
+
+type Bill{
+     _id:ID!
+     amount: String
+     dueDate: String
+     status: billStatus
+     userId: ID!
+     billType: billType 
+}
+
+
+type Query {
+    users:[User]
+    user(id:ID!):User
+    bills(id:ID!):[Bill]
+}
+
+type RegisterResponse {
+  user: User!
+  message: String!
+}
+
+type LoginResponse {
+  user:User!
+  message: String!
+}
+
+type LogoutResponse{
+    message:String!
+}
+
+type BillMarkedPaidResponse{
+    message:String!
+    bill:Bill!
+}
+
+input NewBillInput {
+    amount:Int,
+    dueDate:String,
+    status:String,
+    userId:String,
+    billType:String
+}
+
+type NewBillResponse{
+    message:String!
+    bill:Bill!
+}
+
+type vacateBillDetails{
+     paidBills:Int!
+     unpaidBills:Int!
+     refundable:Int!
+     user:User
+}
+
+type VacateResponse{
+    message:String!
+    bill:vacateBillDetails
+}
+
+
+type Mutation{
+     register(registerInput: RegisterInput!): RegisterResponse!
+     login(loginInput:LoginInput!):LoginResponse!
+     logout:LogoutResponse!
+     markBillPaid(id:ID!):BillMarkedPaidResponse!
+     newBill(newBillInput:NewBillInput!):NewBillResponse!
+     vacate(id:ID!):VacateResponse!
+}
+
+  input RegisterInput {
+    name: String!
+    role:String!
+    email:String!
+    password: String!
+    confirmPassword: String!
+    
+  }
+  
+  input LoginInput {
+   
+    email:String!
+    password: String!
+
+    
+  }
+
+enum Roles {
+    admin
+    tenant
+}
+
+enum Status {
+    active
+    vacated
+}
+
+enum billStatus {
+    paid
+    pending
+}
+
+enum billType {
+    security 
+    other
+}
+`;
