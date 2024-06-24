@@ -6,8 +6,6 @@ PORT = 3000
 MONGO_URL 
 SECRET_KEY 
 
-SCRIPT - npm start or npm run dev - for running in nodemon
-
 
 STARTING THE APPLICATION 
 
@@ -17,7 +15,7 @@ FIRST :
     
     npm install
 
-    npm start or npm run dev
+    npm start or npm run dev - for running in nodemon
 
     make sure the server is running in localhost:3000 if not stop any application running on port 3000
 
@@ -28,4 +26,6 @@ SECOND :
     npm install
     
     npm run dev
+    
+    make sure the client is running in http://localhost:5173 if not stop any application running on port 5173  
     

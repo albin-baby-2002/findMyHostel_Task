@@ -125,11 +125,15 @@ module.exports.resolvers = {
         throw new Error(Object.entries(errors)[0][1]);
       }
 
+      name = name.trim();
+
       const user = await User.findOne({ name });
 
       if (user) {
         throw new Error("username is already taken choose another");
       }
+
+      password = password.trim();
 
       password = await bcrypt.hash(password, 12);
 
@@ -196,6 +200,9 @@ module.exports.resolvers = {
       if (!valid) {
         throw new Error(Object.entries(errors)[0][1]);
       }
+
+      name = name.trim();
+      password = password.trim();
 
       const user = await User.findOne({ name });
 
@@ -274,6 +281,10 @@ module.exports.resolvers = {
     // markBillPaid
 
     async markBillPaid(_, input, contextValue) {
+      if (contextValue.user === null) {
+        throw new Error("you are not logged in ");
+      }
+
       if (contextValue.user.role !== "admin") {
         throw new Error("you don't have admin privileges");
       }
@@ -287,32 +298,39 @@ module.exports.resolvers = {
       if (!mongoose.Types.ObjectId.isValid(billId)) {
         throw new Error("BillId is not a valid ID");
       }
-      
+
       const bill = await Bill.findById(billId);
-      
+
       const userId = bill.userId;
-      
+
       const user = await User.findById(userId);
-      
-      if(user.status === "vacated"){
-        throw new Error("User already vacated")
-      }
-      
-      if(!bill){
-        throw new Error("Failed to find bill with given id")
+
+      if (user.status === "vacated") {
+        throw new Error("User already vacated");
       }
 
-      const updatedBill = await Bill.findByIdAndUpdate(billId, {
-        status: "paid",
-      },{new:true});
+      if (!bill) {
+        throw new Error("Failed to find bill with given id");
+      }
 
-      
+      const updatedBill = await Bill.findByIdAndUpdate(
+        billId,
+        {
+          status: "paid",
+        },
+        { new: true }
+      );
+
       return { bill: updatedBill, message: "bill marked paid" };
     },
 
     // new Bill
 
     async newBill(_, input, contextValue) {
+      if (contextValue.user === null) {
+        throw new Error("you are not logged in ");
+      }
+
       if (contextValue.user.role !== "admin") {
         throw new Error("you don't have admin privileges");
       }
@@ -352,6 +370,10 @@ module.exports.resolvers = {
     //vacate a user and return bills details
 
     async vacate(_, input, contextValue) {
+      if (contextValue.user === null) {
+        throw new Error("you are not logged in ");
+      }
+
       if (contextValue.user.role !== "admin") {
         throw new Error("you don't have admin privileges");
       }
