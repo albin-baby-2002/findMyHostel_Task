@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { useQuery, gql, useMutation } from "@apollo/client";
+import React, { useEffect, useState } from "react";
+import { gql, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const UserLogin = gql`
   mutation login($loginInput: LoginInput!) {
@@ -8,56 +9,70 @@ const UserLogin = gql`
       user {
         _id
         name
-        email
         role
-        token
         status
       }
     }
   }
 `;
 
-const Login = () => {
-  const [login, { data, loading, error }] = useMutation(UserLogin, {
-    onError(err) {
-      console.log(err);
-    },
-    onCompleted(data){
-        navigate('/register')
+const Login = ({ auth, setAuth }) => {
+  const navigate = useNavigate();
+
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+
+  // useEffect to check user auth state
+
+  useEffect(() => {
+    if (auth) {
+      navigate("/");
     }
   });
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  
-  const navigate = useNavigate()
+  // login handler
 
- 
+  const [login, { data, loading, error }] = useMutation(UserLogin, {
+    onError(err) {
+      console.log(err.message, "login");
+      toast.error(err.message);
+    },
+    onCompleted(data) {
+      const user = data.login.user;
+      console.log(user, "login");
+      setAuth(user);
+      navigate("/");
+    },
+  });
+
+  // login handler
+
+  const LoginHandler = async () => {
+    await login({ variables: { loginInput: { name, password } } });
+  };
 
   return (
-    <div className=" flex justify-center items-center min-h-screen">
-      <div className=" flex flex-col gap-6 items-center">
+    <div className=" w-full flex justify-center items-center min-h-screen font-Sen">
+      <div className=" flex flex-col gap-6 items-center w-2/6">
         <p className="  text-3xl font-semibold">Login Page</p>
 
-        {error && <div>{error.message}</div>}
-
-        <div className=" flex flex-col ">
-          <label htmlFor="">email</label>
+        <div className=" flex flex-col w-full ">
+          <label htmlFor="">User Name</label>
 
           <input
-            className="border-2 outline-none px-2 py-1 border-black"
+            className="border-2 w-full outline-none px-2 py-1 border-black"
             type="text"
-            value={email}
+            value={name}
             onChange={(e) => {
-              setEmail(e.target.value);
+              setName(e.target.value);
             }}
           />
         </div>
 
-        <div className=" flex flex-col ">
+        <div className=" flex w-full flex-col ">
           <label htmlFor="">Password</label>
           <input
-            className="border-2 outline-none px-2 py-1 border-black"
+            className="border-2 w-full outline-none px-2 py-1 border-black"
             type="text"
             value={password}
             onChange={(e) => {
@@ -67,15 +82,9 @@ const Login = () => {
         </div>
 
         <button
-          onClick={async () => {
-            
-            await login({ variables: { loginInput: { email, password } } });
-            
-            
-            
-            
-          }}
-          className=" bg-black text-white w-full py-1"
+          disabled={loading}
+          onClick={LoginHandler}
+          className=" bg-black text-white w-full py-2"
         >
           Login
         </button>

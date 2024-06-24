@@ -2,8 +2,8 @@ const express = require("express");
 const { ApolloServer } = require("@apollo/server");
 const { expressMiddleware } = require("@apollo/server/express4");
 const bodyParser = require("body-parser");
-const cors = require("cors");
 const { typeDefs } = require("./Graphql/schema.gql");
+const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/dbConnection");
 const mongoose = require("mongoose");
@@ -23,12 +23,12 @@ async function startServer() {
   });
 
   app.use(bodyParser.json());
- app.use(
-   cors({
-     origin: "http://localhost:5173",
-     credentials: true, // should be lowercase
-   })
- );
+  app.use(
+    cors({
+      origin: "http://localhost:5173",
+      credentials: true,
+    })
+  );
   app.use(cookieParser());
 
   await server.start();

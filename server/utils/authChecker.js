@@ -5,16 +5,12 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 module.exports = async (req) => {
   const token = req.cookies.token;
-  
 
   if (!token) return null;
 
   const foundUser = await User.findOne({ token });
 
-  console.log("jwt enter found user", foundUser);
   if (!foundUser) return null;
-  
-  
 
   try {
     const decoded = await new Promise((resolve, reject) => {
@@ -33,7 +29,6 @@ module.exports = async (req) => {
     if (!userID.equals(decodedID)) {
       return null;
     }
-    console.log("jwt true")
     return foundUser;
   } catch (err) {
     return null;

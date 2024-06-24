@@ -1,119 +1,116 @@
+const { GraphQLBoolean } = require("graphql");
+
 module.exports.typeDefs = `
+  type User {
+    _id: ID!
+    name: String!
+    role: Roles!
+    status: Status!
+    bills: [Bill!]
+  }
 
-type User{
-    _id:ID!
-    name:String!
-    role:Roles!
-    email:String!
-    status:Status!
-    token:String!
-    bills:[Bill!]
-}
+  type Bill {
+    _id: ID!
+    amount: String!
+    dueDate: String!
+    status: billStatus!
+    userId: ID!
+    billType: billType
+  }
 
-type Bill{
-     _id:ID!
-     amount: String
-     dueDate: String
-     status: billStatus
-     userId: ID!
-     billType: billType 
-}
-
-
-type Query {
-    users:[User]
-    user(id:ID!):User
-    bills(id:ID!):[Bill]
-}
-
-type RegisterResponse {
-  user: User!
-  message: String!
-}
-
-type LoginResponse {
-  user:User!
-  message: String!
-}
-
-type LogoutResponse{
-    message:String!
-}
-
-type BillMarkedPaidResponse{
-    message:String!
-    bill:Bill!
-}
-
-input NewBillInput {
-    amount:Int,
-    dueDate:String,
-    status:String,
-    userId:String,
-    billType:String
-}
-
-type NewBillResponse{
-    message:String!
-    bill:Bill!
-}
-
-type vacateBillDetails{
-     paidBills:Int!
-     unpaidBills:Int!
-     refundable:Int!
-     user:User
-}
-
-type VacateResponse{
-    message:String!
-    bill:vacateBillDetails
-}
-
-
-type Mutation{
-     register(registerInput: RegisterInput!): RegisterResponse!
-     login(loginInput:LoginInput!):LoginResponse!
-     logout:LogoutResponse!
-     markBillPaid(id:ID!):BillMarkedPaidResponse!
-     newBill(newBillInput:NewBillInput!):NewBillResponse!
-     vacate(id:ID!):VacateResponse!
-}
+  type Query {
+    users: [User!]
+    user(id: ID!): User!
+    bills(id: ID!): [Bill!]
+  }
 
   input RegisterInput {
     name: String!
-    role:String!
-    email:String!
+    role: String!
     password: String!
     confirmPassword: String!
-    
   }
-  
+
   input LoginInput {
-   
-    email:String!
+    name: String!
     password: String!
-
-    
   }
 
-enum Roles {
+  input NewBillInput {
+    userId: String!
+    amount: Int!
+    dueDate: String!
+    status: billStatus!
+    billType: billType!
+  }
+
+  type Mutation {
+    register(registerInput: RegisterInput!): RegisterResponse!
+    login(loginInput: LoginInput!): LoginResponse!
+    logout: LogoutResponse!
+    markBillPaid(id: ID!): BillMarkedPaidResponse!
+    newBill(newBillInput: NewBillInput!): NewBillResponse!
+    vacate(id: ID!): VacateResponse!
+    checkLogin: CheckLoginResponse!
+  }
+
+  type RegisterResponse {
+    user: User!
+    message: String!
+  }
+
+  type LoginResponse {
+    user: User!
+    message: String!
+  }
+
+  type LogoutResponse {
+    message: String!
+  }
+
+  type BillMarkedPaidResponse {
+    message: String!
+    bill: Bill!
+  }
+  type NewBillResponse {
+    message: String!
+    bill: Bill!
+  }
+
+  type vacateBillDetails {
+    paidBills: Int!
+    unpaidBills: Int!
+    refundable: Int!
+    user: User!
+  }
+
+  type VacateResponse {
+    message: String!
+    bill: vacateBillDetails
+  }
+
+  type CheckLoginResponse {
+    user: User!
+    message: String!
+  }
+
+  enum Roles {
     admin
     tenant
-}
+  }
 
-enum Status {
+  enum Status {
     active
     vacated
-}
+  }
 
-enum billStatus {
+  enum billStatus {
     paid
     pending
-}
+  }
 
-enum billType {
-    security 
+  enum billType {
+    security
     other
-}
+  }
 `;

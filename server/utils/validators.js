@@ -1,7 +1,9 @@
+const { default: mongoose } = require("mongoose");
+
 module.exports.validateRegisterInput = (
   name,
   role,
-  email,
+
   password,
   confirmPassword
 ) => {
@@ -19,16 +21,6 @@ module.exports.validateRegisterInput = (
     }
   }
 
-  if (email.trim() === "") {
-    errors.email = "email must not be empty";
-  } else {
-    const regEx =
-      /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
-
-    if (!email.match(regEx)) {
-      errors.email = "Enter a valid email";
-    }
-  }
 
   if (password === "") {
     errors.password = "Password must not empty";
@@ -42,21 +34,55 @@ module.exports.validateRegisterInput = (
   };
 };
 
-module.exports.validateLoginInput = (email, password) => {
+module.exports.validateLoginInput = (name, password) => {
   const errors = {};
-  if (email.trim() === "") {
-    errors.email = "email must not be empty";
-  } else {
-    const regEx =
-      /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
-
-    if (!email.match(regEx)) {
-      errors.email = "Enter a valid email";
-    }
-  }
+  
+  
+   if (name.trim() === "") {
+     errors.username = "name must not be empty";
+   }
 
   if (password.trim() === "") {
     errors.password = "Password must not be empty";
+  }
+
+  return {
+    errors,
+    valid: Object.keys(errors).length < 1,
+  };
+};
+
+module.exports.validateNewBillInput = (
+  userId,
+  amount,
+  dueDate,
+  status,
+  billType
+) => {
+  const errors = {};
+
+  if (!userId || userId.trim() === "") {
+    errors.userId = "UserID shouldn't be empty";
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    errors.userId = "UserID is not a valid ID";
+  }
+
+  if (!amount || amount <= 0) {
+    errors.amount = "Bill amount should a valid Number > 0";
+  }
+
+  if (!dueDate || dueDate.trim() === "") {
+    errors.dueDate = "Due date should be a valid date";
+  }
+
+  if (!status || status.trim() === "") {
+    errors.status = "status should be a valid string of paid or pending";
+  }
+
+  if (!billType || billType.trim() === "") {
+    errors.billType = "billType should be a valid string of paid or pending";
   }
 
   return {
