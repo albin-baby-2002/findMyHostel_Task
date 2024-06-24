@@ -49,7 +49,7 @@ const BillsComponent = ({bills,refetch}) => {
       </div>
 
       {bills.map((bill, idx) => (
-        <div>
+        <div key={idx}>
           <div
             className=" border-b py-4 px-7  border-black "
             onClick={() => {}}
